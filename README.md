@@ -128,8 +128,9 @@ cd <decaid> && flutter test test/plugins/solobarista_plugin_test.dart
   FFF0/FFF1/FFF2 discovery, the initial ml-to-g unit switch, tare, and timer
   start/stop/reset all behaved as documented. The scale timer froze on stop and
   reset to zero.
-- The Decaid plugin itself has not yet been installed against the physical
-  scale; its host integration is covered by the simulated tests above.
+- The plugin was installed in Decaid 0.9.0 on a Samsung SM-X210 (Android 16)
+  and connected to a physical LSJ-001: weight read 97.6 g, and timer
+  start/stop/reset through Decaid stopped at 6 s and reset to 0.
 
 ## Releasing
 

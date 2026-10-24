@@ -111,7 +111,9 @@ cd <decaid> && flutter test test/plugins/solobarista_plugin_test.dart
 - LSJ-001 BLE 协议已在真机上用独立探针验证：FFF0/FFF1/FFF2 发现、
   初始 ml→g 单位切换、去皮、计时开始/停止/清零均正常；停止后计时冻结，
   清零后归零
-- Decaid 插件本身尚未在实体秤上安装测试；宿主集成由上面的模拟测试覆盖
+- 插件已在三星 SM-X210（Android 16）的 Decaid 0.9.0 上安装并连接实体
+  LSJ-001：重量读到 97.6 g；通过 Decaid 触发计时开始/停止/清零正常，
+  停止后冻结在 6 秒，清零后归零
 
 ## 发布
 
