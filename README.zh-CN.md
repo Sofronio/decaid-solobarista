@@ -103,17 +103,39 @@ cp test/decaid/plugins/solobarista_plugin_test.dart    <decaid>/test/plugins/
 cd <decaid> && flutter test test/plugins/solobarista_plugin_test.dart
 ```
 
-## 验证状态
+## 验证
 
-- Node 协议测试：8 项通过
-- Decaid 集成测试：5 项通过（name-only 匹配、连接、重量/计时、命令、
+### 自动化测试
+
+- `node --test test/plugin_test.mjs`：8/8 通过
+- Decaid 集成测试：5/5 通过（name-only 匹配、连接、重量/计时、命令、
   坏校验、显示休眠断开）
-- LSJ-001 BLE 协议已在真机上用独立探针验证：FFF0/FFF1/FFF2 发现、
-  初始 ml→g 单位切换、去皮、计时开始/停止/清零均正常；停止后计时冻结，
-  清零后归零
-- 插件已在三星 SM-X210（Android 16）的 Decaid 0.9.0 上安装并连接实体
-  LSJ-001：重量读到 97.6 g；通过 Decaid 触发计时开始/停止/清零正常，
-  停止后冻结在 6 秒，清零后归零
+
+### 真机 BLE 协议探针（2026-10-24）
+
+实体 LSJ-001，macOS 上的独立 bleak 探针：
+
+- 扫描：`LSJ-001`，广播 services `[]`，确认只能按名字匹配
+- GATT：FFF0；FFF1 notify；FFF2 write / write-without-response
+- 初始单位是 `02`（ml）；发送 `AA 03 36 00 36` 后，帧变成 `00`（g）
+- 去皮 `AA 02 31 31`、计时清零 `AA 02 35 35` 正常
+- 开始 `AA 02 33 33`：`running=1`，计时从 00:00 到 00:02
+- 停止 `AA 02 34 34`：`running=0`，计时冻结在 00:02，连续读数不变
+- 清零：计时回到 00:00
+- 当时秤是空的（0.0 g），这一轮重点验证单位、命令和计时
+
+### Decaid 端到端（2026-10-24）
+
+三星 SM-X210（Galaxy Tab A9+），Android 16，Decaid 0.9.0：
+
+- 插件 v0.1.0 已安装、启用、loaded
+- 设备发现为
+  `plugin:solobarista.reaplugin:solobarista:bc:a6:30:23:13:8e`，作为主秤连接
+- 实时重量：**97.6 g**（97.5–97.6 g 波动），battery `null`（帧里没有电量），
+  计时 0
+- 通过 Decaid 触发计时：开始 → 2 秒后 2000 ms；停止 → 冻结在 6000 ms；
+  清零 → 0 ms
+- 没有发去皮命令，所以 97.6 g 的负载保留在秤上
 
 ## 发布
 

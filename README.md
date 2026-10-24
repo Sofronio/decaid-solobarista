@@ -119,18 +119,42 @@ cp test/decaid/plugins/solobarista_plugin_test.dart    <decaid>/test/plugins/
 cd <decaid> && flutter test test/plugins/solobarista_plugin_test.dart
 ```
 
-## Verification status
+## Verification
 
-- Node protocol tests: 8 passing.
-- Decaid integration tests: 5 passing (name-only advertisement match, connect,
-  weight/timer, commands, bad checksum, display-sleep disconnect).
-- The LSJ-001 BLE protocol was verified on hardware with a standalone probe:
-  FFF0/FFF1/FFF2 discovery, the initial ml-to-g unit switch, tare, and timer
-  start/stop/reset all behaved as documented. The scale timer froze on stop and
-  reset to zero.
-- The plugin was installed in Decaid 0.9.0 on a Samsung SM-X210 (Android 16)
-  and connected to a physical LSJ-001: weight read 97.6 g, and timer
-  start/stop/reset through Decaid stopped at 6 s and reset to 0.
+### Automated tests
+
+- `node --test test/plugin_test.mjs`: 8/8 passing.
+- Decaid integration tests: 5/5 passing (name-only advertisement match,
+  connect, weight/timer, commands, bad checksum, display-sleep disconnect).
+
+### Hardware protocol probe (2026-10-24)
+
+Physical LSJ-001, standalone bleak probe on macOS:
+
+- Scan: `LSJ-001`, advertised services `[]` (name-only match confirmed).
+- GATT: FFF0; FFF1 notify; FFF2 write / write-without-response.
+- Initial unit was `02` (ml). After `AA 03 36 00 36`, frames reported unit
+  `00` (g).
+- Tare `AA 02 31 31` and timer reset `AA 02 35 35` completed.
+- Start `AA 02 33 33`: `running=1`; timer advanced 00:00 → 00:02.
+- Stop `AA 02 34 34`: `running=0`; timer froze at 00:02 across repeated reads.
+- Reset: timer returned to 00:00.
+- The scale was empty (0.0 g); this probe focused on unit, command and timer
+  behavior.
+
+### Decaid end-to-end (2026-10-24)
+
+Samsung SM-X210 (Galaxy Tab A9+), Android 16, Decaid 0.9.0:
+
+- Plugin v0.1.0 installed, enabled, and loaded.
+- Device discovered as
+  `plugin:solobarista.reaplugin:solobarista:bc:a6:30:23:13:8e` and connected as
+  the primary scale.
+- Live weight: **97.6 g** (97.5–97.6 g variation), battery `null` (the frame
+  has no battery field), timer 0.
+- Timer through Decaid: start → 2000 ms after 2 s; stop → frozen at 6000 ms;
+  reset → 0 ms.
+- Tare was intentionally not sent, so the 97.6 g load remained on the scale.
 
 ## Releasing
 
