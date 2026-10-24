@@ -165,4 +165,4 @@ equal `manifest.version`; the archive contains one top-level
 
 ## License
 
-Not yet chosen.
+[MIT](LICENSE). Copyright (c) 2026 Sofronio.

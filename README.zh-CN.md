@@ -145,4 +145,4 @@ cd <decaid> && flutter test test/plugins/solobarista_plugin_test.dart
 
 ## 许可证
 
-尚未选择。
+[MIT](LICENSE)，Copyright (c) 2026 Sofronio。
